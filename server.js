@@ -13,7 +13,7 @@ app.use(cors());
 const GITHUB_TOKEN = "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" ;
 const OWNER = "chiranjeevi-m-n";
 const REPO = "my-docs";
-const PORT = process.env.PORT || 10000;
+const PORT = process.env.PORT || 5000;
 
 /**
  * Swagger Configuration
@@ -26,7 +26,7 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API to upload and list files on GitHub using Express.js",
         },
-        servers: [{ url: `https://localhost:${PORT}` }], // Update for Render when deployed
+        servers: [{ url: `http://localhost:${PORT}` }], // Update for Render when deployed
     },
     apis: ["./server.js"], // Ensure the file is correctly referenced
 };
