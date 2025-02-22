@@ -28,7 +28,7 @@ const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "GitHub File Upload API",
+            title: "GitHub File Upload",
             version: "1.0.0",
             description: "API to upload and list files on GitHub using Express.js",
         },
