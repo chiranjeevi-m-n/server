@@ -10,9 +10,6 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const GITHUB_TOKEN = "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" ;
-const OWNER = "chiranjeevi-m-n";
-const REPO = "my-docs";
 const PORT = process.env.PORT || 5000;
 
 /**
