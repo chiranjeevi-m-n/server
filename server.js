@@ -5,43 +5,41 @@ import express from "express";
 import cors from "cors";
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-import fetch from "node-fetch";  // Ensure node-fetch is installed
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
-// ✅ Fix CORS Policy
-app.use(cors({
-    origin: "*",  // Allow all origins (change to specific frontend in production)
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
-
-// ✅ Environment Variables
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const OWNER = process.env.OWNER;
-const REPO = process.env.REPO;
+const GITHUB_TOKEN = "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" ;
+const OWNER = "chiranjeevi-m-n";
+const REPO = "my-docs";
 const PORT = process.env.PORT || 5000;
 
-// ✅ Swagger Configuration
+/**
+ * Swagger Configuration
+ */
 const swaggerOptions = {
     definition: {
         openapi: "3.0.0",
         info: {
-            title: "GitHub File Upload",
+            title: "GitHub File Upload API",
             version: "1.0.0",
             description: "API to upload and list files on GitHub using Express.js",
         },
-        servers: [{ url: "https://nodeserver-6nv5.onrender.com" }], // Update to your Render URL
+        servers: [{ url: `http://localhost:${PORT}` }], // Update for Render when deployed
     },
-    apis: ["./server.js"], // Make sure this file path is correct
+    apis: ["./server.js"], // Ensure the file is correctly referenced
 };
 
 const swaggerDocs = swaggerJSDoc(swaggerOptions);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// ✅ Redirect root to Swagger UI
-app.get("/", (req, res) => res.redirect("/api-docs"));
+/**
+ * Redirect root URL to Swagger UI
+ */
+app.get("/", (req, res) => {
+    res.redirect("/api-docs");
+});
 
 /**
  * @swagger
@@ -49,24 +47,23 @@ app.get("/", (req, res) => res.redirect("/api-docs"));
  *   post:
  *     summary: Upload a file to GitHub repository
  *     description: Uploads a file to a GitHub repository's "uploads" folder.
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               fileName:
- *                 type: string
- *               fileContent:
- *                 type: string
+ *     parameters:
+ *       - in: body
+ *         name: file
+ *         required: true
+ *         description: File to upload
+ *         schema:
+ *           type: object
+ *           properties:
+ *             fileName:
+ *               type: string
+ *             fileContent:
+ *               type: string
  *     responses:
  *       200:
  *         description: File uploaded successfully
  *       400:
  *         description: Missing fileName or fileContent
- *       401:
- *         description: Unauthorized (Invalid GitHub Token)
  *       500:
  *         description: Internal server error
  */
@@ -89,7 +86,7 @@ app.post("/upload", async (req, res) => {
             },
             body: JSON.stringify({
                 message: `Upload ${fileName}`,
-                content: Buffer.from(fileContent).toString("base64"), // Convert to base64
+                content: fileContent,
             }),
         });
 
@@ -115,8 +112,6 @@ app.post("/upload", async (req, res) => {
  *     responses:
  *       200:
  *         description: Successfully retrieved list of files
- *       401:
- *         description: Unauthorized (Invalid GitHub Token)
  *       500:
  *         description: Internal server error
  */
@@ -138,7 +133,7 @@ app.get("/files", async (req, res) => {
         const files = await response.json();
         const fileList = files.map(file => ({
             name: file.name,
-            downloadUrl: file.html_url,
+            downloadUrl: file.html_url,  // Use `html_url` for correct link
         }));
 
         res.json(fileList);
@@ -148,8 +143,4 @@ app.get("/files", async (req, res) => {
     }
 });
 
-// ✅ Handle Preflight CORS Requests
-app.options("*", cors());
-
-// ✅ Start Server
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
