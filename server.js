@@ -26,7 +26,7 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API to upload and list files on GitHub using Express.js",
         },
-        servers: [{ url: `http://localhost:${PORT}` }], // Update for Render when deployed
+        servers: [{ url: `https://localhost:${PORT}` }], // Update for Render when deployed
     },
     apis: ["./server.js"], // Ensure the file is correctly referenced
 };
