@@ -3,18 +3,69 @@ config(); // Load environment variables
 
 import express from "express";
 import cors from "cors";
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 const app = express();
 app.use(express.json());
 app.use(cors());
 
-const GITHUB_TOKEN = "process.env.GITHUB_TOKEN" ;
+const GITHUB_TOKEN = "process.env.TOKEN" ;
 const OWNER = "process.env.OWNER";
 const REPO = "process.env.REPO";
 const PORT = process.env.PORT || 5000;
 
 /**
- * Upload a file to GitHub repository.
+ * Swagger Configuration
+ */
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "GitHub File Upload API",
+            version: "1.0.0",
+            description: "API to upload and list files on GitHub using Express.js",
+        },
+        servers: [{ url: `http://localhost:${PORT}` }], // Update for Render when deployed
+    },
+    apis: ["./server.js"], // Ensure the file is correctly referenced
+};
+
+const swaggerDocs = swaggerJSDoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+
+/**
+ * Redirect root URL to Swagger UI
+ */
+app.get("/", (req, res) => {
+    res.redirect("/api-docs");
+});
+
+/**
+ * @swagger
+ * /upload:
+ *   post:
+ *     summary: Upload a file to GitHub repository
+ *     description: Uploads a file to a GitHub repository's "uploads" folder.
+ *     parameters:
+ *       - in: body
+ *         name: file
+ *         required: true
+ *         description: File to upload
+ *         schema:
+ *           type: object
+ *           properties:
+ *             fileName:
+ *               type: string
+ *             fileContent:
+ *               type: string
+ *     responses:
+ *       200:
+ *         description: File uploaded successfully
+ *       400:
+ *         description: Missing fileName or fileContent
+ *       500:
+ *         description: Internal server error
  */
 app.post("/upload", async (req, res) => {
     try {
@@ -53,7 +104,16 @@ app.post("/upload", async (req, res) => {
 });
 
 /**
- * Get list of uploaded files from GitHub repository.
+ * @swagger
+ * /files:
+ *   get:
+ *     summary: Get list of uploaded files from GitHub repository
+ *     description: Fetches the list of files stored in the repository's "uploads" folder.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved list of files
+ *       500:
+ *         description: Internal server error
  */
 app.get("/files", async (req, res) => {
     try {
@@ -83,4 +143,4 @@ app.get("/files", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

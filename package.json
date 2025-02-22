@@ -1,4 +1,13 @@
 {
+  "name": "github-file-upload-api",
+  "version": "1.0.0",
+  "description": "API to upload and list files on GitHub using Express.js",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
@@ -6,5 +15,14 @@
     "node-fetch": "^3.3.2",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
-  }
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["express", "github", "file-upload", "swagger", "api"],
+  "author": "Chiranjeevi M N",
+  "license": "MIT"
 }
